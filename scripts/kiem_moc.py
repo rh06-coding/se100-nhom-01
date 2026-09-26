@@ -43,6 +43,16 @@ def git(*args):
         return ""
 
 
+def so_thanh_vien_khai_bao_trong_readme():
+    """Đếm số thành viên đã khai báo GitHub handle trong bảng 'Thành viên'."""
+    readme = doc("README.md") or ""
+    m = re.search(r"##\s*Thành viên(.*?)(?:\n##\s|\Z)", readme, re.S | re.I)
+    if not m:
+        return 0
+    bang = m.group(1)
+    return len(re.findall(r"\|\s*@[\w-]+\s*\|", bang))
+
+
 def ten_lop_trong_class_mmd(text):
     return set(re.findall(r"^\s*class\s+([A-Za-z_][A-Za-z0-9_]*)", text, re.M))
 
@@ -144,8 +154,9 @@ def kiem_M0():
     ghi("Xoá dòng này" not in readme, "README đã xoá hướng dẫn mẫu", "")
 
     tac_gia = set(a.strip() for a in git("log", "--format=%ae").splitlines() if a.strip())
-    ghi(len(tac_gia) >= 4, f"Đủ 4 thành viên có commit (thấy {len(tac_gia)} email)",
-        "" if len(tac_gia) >= 4 else "mỗi người phải tự commit ít nhất một lần bằng tài khoản của mình")
+    can_co = so_thanh_vien_khai_bao_trong_readme() or 4
+    ghi(len(tac_gia) >= can_co, f"Đủ {can_co} thành viên có commit (thấy {len(tac_gia)} email)",
+        "" if len(tac_gia) >= can_co else "mỗi người phải tự commit ít nhất một lần bằng tài khoản của mình")
 
     ton_tai("docs/cau-hoi-khach-hang.md", "Có 3 câu hỏi cho khách hàng")
     ch = doc("docs/cau-hoi-khach-hang.md") or ""

@@ -1,4 +1,4 @@
-name: Kiểm mốc
+name: Kiem moc
 
 on:
   pull_request:
@@ -13,21 +13,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0          # can thiet de dem so thanh vien commit
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Setup Node.js (for mermaid-cli)
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Mermaid CLI
-        run: npm install -g @mermaid-js/mermaid-cli
-
-      - name: Run script kiem_moc.py
-        run: |
-          python scripts/kiem_moc.py
+      - name: Run kiem_moc.py
+        env:
+          GITHUB_HEAD_REF: ${{ github.head_ref }}   # de script tu doan moc tu ten nhanh PR
+        run: python scripts/kiem_moc.py

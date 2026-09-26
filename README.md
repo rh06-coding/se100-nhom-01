@@ -1,19 +1,19 @@
 # Hệ thống Đặt chỗ Phòng tự học — SE100 · Nhóm 01
 
 Hệ thống hỗ trợ sinh viên trong khoa chủ động đăng ký sử dụng các phòng tự học theo từng khung giờ học tập và nghiên cứu.
-Giáo vụ phụ trách quản lý danh mục phòng, duyệt các yêu cầu đặt phòng đặc biệt và giám sát lịch trình sử dụng.
-Bảo vệ và kỹ thuật viên chịu trách nhiệm kiểm tra mã xác nhận khi sinh viên nhận phòng và hoàn tất thủ tục trả phòng sau ca tự học.
-Quy trình đặt chỗ vận hành nghiêm ngặt qua các trạng thái: Đặt phòng → Duyệt / Xác nhận → Nhận phòng → Trả phòng.
-Ràng buộc cốt lõi: Không cho phép hai lượt đặt trùng phòng và giờ; nếu quá 15 phút sau giờ bắt đầu mà sinh viên không đến xác nhận thì hệ thống sẽ tự động hủy lượt đặt để nhường cho người khác.
+Giáo vụ phụ trách quản lý danh mục phòng, xét duyệt hoặc từ chối các yêu cầu đặt phòng để đảm bảo phân bổ hợp lý, đúng đối tượng và không chồng chéo.
+Bảo vệ phụ trách xác nhận sinh viên có mặt nhận phòng đúng giờ và ghi nhận thời điểm trả phòng thực tế để cập nhật trạng thái phòng.
+Quy trình đặt chỗ vận hành nghiêm ngặt qua các trạng thái: Chờ duyệt → Đã duyệt → Đã nhận phòng → Đã trả phòng (hoặc Đã hủy).
+Ràng buộc cốt lõi: Không tồn tại hai lượt đặt trùng khung giờ cho cùng một phòng; nếu quá 15 phút kể từ giờ bắt đầu mà sinh viên chưa đến nhận phòng thì hệ thống tự động chuyển trạng thái Đã hủy và giải phóng phòng.
 
 ## Thành viên
 
-| Tên | GitHub | Chủ trì mốc |
-|---|---|---|
-| [Thành viên 1] | @username1 | M1: Yêu cầu |
-| [Thành viên 2] | @username2 | M2: Mô hình hoá |
-| [Thành viên 3] | @username3 | M3–M4: Thiết kế |
-| [Thành viên 4] | @username4 | M5: Giao hàng |
+| STT | Họ và tên | MSSV | GitHub | Chủ trì mốc |
+|:---:|---|:---:|---|---|
+| 1 | Phạm Văn Đức Duy | 24520395 | *(chờ cập nhật)* | M1: Yêu cầu |
+| 2 | Nguyễn Văn Diễn | 24520300 | *(chờ cập nhật)* | M2: Mô hình hoá |
+| 3 | Võ Thành Đạt | 24520296 | *(chờ cập nhật)* | M3–M4: Thiết kế |
+| 4 | Lê Hoàng | 24520538 | @rh06-coding | M0 & M5: Dựng môi trường & Giao hàng |
 
 ## URL
 

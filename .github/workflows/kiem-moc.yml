@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -30,15 +30,15 @@ jobs:
 
       - name: Set up Python
         if: steps.moc.outputs.skip != 'true'
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.14'
+          python-version: '3.11'
 
       - name: Setup Node.js (for mermaid-cli)
         if: steps.moc.outputs.skip != 'true'
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
 
       - name: Install Mermaid CLI
         if: steps.moc.outputs.skip != 'true'

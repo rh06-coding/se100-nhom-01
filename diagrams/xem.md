@@ -1,23 +1,49 @@
-# Xem sơ đồ
+# Sơ đồ lớp — Hệ thống Đặt chỗ Phòng tự học
+
+*Hiển thị trực quan cho GitHub render từ tệp `diagrams/class.mmd`.*
 
 ```mermaid
 classDiagram
-  class Phong {
-    +String ma
-    +int sucChua
-    +conTrong(khungGio) bool
-  }
-  class DatCho {
-    +Date batDau
-    +Date ketThuc
-    +TrangThai trangThai
-    +xacNhan()
-    +huy(lyDo)
-  }
   class SinhVien {
-    +String mssv
-    +datPhong(phong, khungGio) DatCho
+    +String maSV
+    +String hoTen
+    +String email
+    +taoYeuCauDat()
+    +yeuCauNhanPhong()
+    +huyYeuCau()
   }
-  SinhVien "1" --> "*" DatCho : tạo
-  DatCho "*" --> "1" Phong : cho
+  class PhongTuHoc {
+    +String maPhong
+    +int sucChua
+    +String trangThai
+    +kiemTraKhungGio()
+    +capNhatTrangThai()
+  }
+  class GiaoVu {
+    +String maGV
+    +String hoTen
+    +duyetYeuCau()
+    +tuChoiYeuCau()
+  }
+  class BaoVe {
+    +String maBV
+    +String hoTen
+    +xacNhanCheckIn()
+    +xacNhanCheckOut()
+  }
+  class PhieuDatPhong {
+    +String maPhieu
+    +DateTime thoiGianBatDau
+    +DateTime thoiGianKetThuc
+    +String trangThaiPhieu
+    +xacNhanDuyet()
+    +capNhatCheckIn()
+    +kiemTraQuaHan15Phut()
+    +capNhatCheckOut()
+  }
+
+  SinhVien "1" --> "*" PhieuDatPhong : tao
+  PhongTuHoc "1" --> "*" PhieuDatPhong : duoc dat boi
+  GiaoVu "1" --> "*" PhieuDatPhong : xet duyet
+  BaoVe "1" --> "*" PhieuDatPhong : xac nhan
 ```

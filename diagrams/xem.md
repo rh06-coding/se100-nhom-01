@@ -1,0 +1,23 @@
+# Xem sơ đồ
+
+```mermaid
+classDiagram
+  class Phong {
+    +String ma
+    +int sucChua
+    +conTrong(khungGio) bool
+  }
+  class DatCho {
+    +Date batDau
+    +Date ketThuc
+    +TrangThai trangThai
+    +xacNhan()
+    +huy(lyDo)
+  }
+  class SinhVien {
+    +String mssv
+    +datPhong(phong, khungGio) DatCho
+  }
+  SinhVien "1" --> "*" DatCho : tạo
+  DatCho "*" --> "1" Phong : cho
+```

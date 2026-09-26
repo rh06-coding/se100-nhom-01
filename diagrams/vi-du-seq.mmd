@@ -1,0 +1,13 @@
+sequenceDiagram
+  %% Ví dụ tối thiểu — xoá khi có sơ đồ thật. Tên tệp thật phải là seq-<ten>.mmd
+  actor SV as Sinh viên
+  participant SinhVien
+  participant DatCho
+  participant Phong
+
+  SV->>SinhVien: datPhong(phong, khungGio)
+  SinhVien->>Phong: conTrong(khungGio)
+  Phong-->>SinhVien: true
+  SinhVien->>DatCho: new DatCho(batDau, ketThuc)
+  DatCho->>DatCho: xacNhan()
+  DatCho-->>SV: mã đặt chỗ

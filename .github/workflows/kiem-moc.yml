@@ -11,23 +11,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
+      - name: Xác định mốc từ tên nhánh
+        id: moc
+        run: |
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+          MOC=$(echo "$BRANCH" | grep -oE 'M[0-9]+' || true)
+          if [ -z "$MOC" ]; then
+            echo "Nhánh '$BRANCH' không phải nhánh mốc (moc/M*), bỏ qua kiểm mốc."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "moc=$MOC" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Set up Python
-        uses: actions/setup-python@v5
+        if: steps.moc.outputs.skip != 'true'
+        uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: '3.14'
 
       - name: Setup Node.js (for mermaid-cli)
-        uses: actions/setup-node@v4
+        if: steps.moc.outputs.skip != 'true'
+        uses: actions/setup-node@v6
         with:
           node-version: '24'
 
       - name: Install Mermaid CLI
+        if: steps.moc.outputs.skip != 'true'
         run: npm install -g @mermaid-js/mermaid-cli
 
       - name: Run script kiem_moc.py
-        run: |
-          python scripts/kiem_moc.py
+        if: steps.moc.outputs.skip != 'true'
+        run: python scripts/kiem_moc.py "${{ steps.moc.outputs.moc }}"

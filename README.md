@@ -12,7 +12,7 @@ Ràng buộc cốt lõi: Không tồn tại hai lượt đặt trùng khung gi�
 |:---:|---|:---:|---|---|
 | 1 | Phạm Văn Đức Duy | 24520395 | *(chờ cập nhật)* | M1: Yêu cầu |
 | 2 | Nguyễn Văn Diễn | 24520300 | *(chờ cập nhật)* | M2: Mô hình hoá |
-| 3 | Võ Thành Đạt | 24520296 | *(chờ cập nhật)* | M3–M4: Thiết kế |
+| 3 | Võ Thành Đạt | 24520296 | @vodat102 | M3–M4: Thiết kế |
 | 4 | Lê Hoàng | 24520538 | @rh06-coding | M0 & M5: Dựng môi trường & Giao hàng |
 
 ## URL

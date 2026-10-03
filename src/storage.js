@@ -24,3 +24,25 @@ export function layTatCaPhieu() {
   // JSON.parse(null) = null, nên dùng || [] để trả về mảng rỗng
   return JSON.parse(raw) || [];
 }
+
+/**
+ * Lưu một phiếu mới. Bổ sung maPhieu, trangThai, thoiGianTao.
+ * Trả về phiếu đã hoàn chỉnh (để main.js dùng hiện lên UI).
+ *
+ * JSON.stringify chuyển JavaScript value → string để localStorage lưu.
+ *
+ * [Câu 2 trước commit]: Xoá hàm này → phiếu không bao giờ được lưu,
+ * F5 là mất toàn bộ → demo tuần 4 không qua được.
+ */
+export function luuPhieu(duLieuPhieu) {
+  const tatCa = layTatCaPhieu();
+  const phieuMoi = {
+    ...duLieuPhieu,                           // spread dữ liệu từ form
+    maPhieu:     'PDC-' + Date.now(),         // ID duy nhất (ms từ epoch)
+    trangThai:   'ChoDuyet',                  // trạng thái ban đầu
+    thoiGianTao: new Date().toISOString(),    // timestamp chuẩn ISO
+  };
+  tatCa.push(phieuMoi);
+  localStorage.setItem(KEY, JSON.stringify(tatCa));
+  return phieuMoi; // Trả về để main.js hiện xác nhận
+}

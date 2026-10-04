@@ -1,10 +1,10 @@
 import { langNgheSubmit, resetForm } from './form.js';
 import { kiemTraHopLe } from './rules.js';
-import { layDanhSachPhieu, luuPhieu } from './storage.js';
+import { layTatCaPhieu, luuPhieu } from './storage.js';
 import { hienBannerThanhCong, hienBannerLoi, hienDanhSachPhieu } from './view.js';
 
 function xuLyDatPhong(duLieuForm) {
-  const danhSachHienTai = layDanhSachPhieu() || [];
+  const danhSachHienTai = layTatCaPhieu() || [];
 
   const ketQuaKiemTra = kiemTraHopLe(duLieuForm, danhSachHienTai);
   if (!ketQuaKiemTra.hopLe) {
@@ -12,24 +12,15 @@ function xuLyDatPhong(duLieuForm) {
     return;
   }
 
-  const phieuMoi = {
-    maPhieu: `P-${Date.now()}`,
-    tenPhong: duLieuForm.tenPhong,
-    nguoiDat: duLieuForm.nguoiDat,
-    thoiGianBatDau: duLieuForm.thoiGianBatDau,
-    thoiGianKetThuc: duLieuForm.thoiGianKetThuc,
-    trangThaiPhieu: 'Chờ duyệt'
-  };
+  const phieuDaLuu = luuPhieu(duLieuForm);
 
-  luuPhieu(phieuMoi);
-
-  hienBannerThanhCong(phieuMoi);
-  hienDanhSachPhieu(layDanhSachPhieu());
+  hienBannerThanhCong(phieuDaLuu);
+  hienDanhSachPhieu(layTatCaPhieu());
   resetForm();
 }
 
 function khoiTao() {
-  const danhSach = layDanhSachPhieu() || [];
+  const danhSach = layTatCaPhieu() || [];
   hienDanhSachPhieu(danhSach);
   langNgheSubmit(xuLyDatPhong);
 }

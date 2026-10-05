@@ -10,7 +10,7 @@
 - **Thời điểm đo:** 05/10/2026
 - **Phạm vi phân tích:** 6 tệp trong `src/` (`index.html`, `form.js`, `rules.js`, `storage.js`, `view.js`, `main.js`).
 - **Kết quả 3 con số:**
-  - **Tổng số dòng:** 748 dòng (521 dòng JavaScript, 227 dòng Markup)
+  - **Tổng số dòng:** 760 dòng (533 dòng JavaScript, 227 dòng Markup)
   - **Số khối trùng:** 0 khối
   - **Tỷ lệ trùng lặp:** 0.00%
 

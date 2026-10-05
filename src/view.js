@@ -1,3 +1,15 @@
+// src/view.js
+// Phần 4 — Màn hình kết quả: Banner thông báo và danh sách phiếu đặt phòng.
+//
+// [Câu 1 trước commit]: Hiển thị banner thành công/lỗi và render danh sách phiếu
+//   đã đặt dưới dạng thẻ card, sử dụng thuần DOM API (createElement, textContent)
+//   để bảo vệ hệ thống trước tấn công XSS từ dữ liệu người dùng nhập.
+//
+// [Câu 2 trước commit]: Xoá file này -> Người dùng đặt phòng xong không thấy thông báo
+//   kết quả và không thấy danh sách phiếu -> Mắt xích cuối cùng của luồng lõi bị đứt.
+//
+// [Câu 3 trước commit]: Không chỗ nào khác trong src/ làm nhiệm vụ hiển thị kết quả và danh sách phiếu. ✓
+
 function layContainerBanner(targetEl = null) {
   if (targetEl) return targetEl;
   let banner = document.getElementById('banner') || document.getElementById('thong-bao');

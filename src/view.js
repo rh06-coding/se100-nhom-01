@@ -4,17 +4,24 @@ function layContainerBanner(targetEl = null) {
   if (!banner) {
     banner = document.createElement('div');
     banner.id = 'banner';
-    document.body.prepend(banner);
+    const formContainer = document.getElementById('form-container');
+    if (formContainer && formContainer.parentNode) {
+      formContainer.parentNode.insertBefore(banner, formContainer);
+    } else {
+      document.body.prepend(banner);
+    }
   }
   return banner;
 }
 
 function layContainerDanhSach(targetEl = null) {
   if (targetEl) return targetEl;
-  let container = document.getElementById('danh-sach-phieu') || document.getElementById('danhSachPhieu');
+  let container = document.getElementById('lich-su') ||
+                  document.getElementById('danh-sach-phieu') ||
+                  document.getElementById('danhSachPhieu');
   if (!container) {
-    container = document.createElement('div');
-    container.id = 'danh-sach-phieu';
+    container = document.createElement('section');
+    container.id = 'lich-su';
     document.body.appendChild(container);
   }
   return container;
@@ -30,7 +37,7 @@ export function hienBannerThanhCong(phieu, targetEl = null) {
     ? (phieu.maPhieu ?? phieu.id ?? '')
     : String(phieu ?? '');
 
-  hopThongBao.textContent = `Đặt phòng thành công! Mã phiếu: ${maPhieu}`;
+  hopThongBao.textContent = `✓ Đặt phòng thành công! Mã phiếu: ${maPhieu}`;
 
   container.replaceChildren(hopThongBao);
 }
@@ -54,58 +61,63 @@ export function hienDanhSachPhieu(mangPhieu, targetEl = null) {
   const container = layContainerDanhSach(targetEl);
 
   if (!Array.isArray(mangPhieu) || mangPhieu.length === 0) {
-    const thongBaoTrong = document.createElement('p');
-    thongBaoTrong.className = 'danh-sach-trong';
-    thongBaoTrong.textContent = 'Chưa có phiếu đặt phòng nào trong danh sách.';
-    container.replaceChildren(thongBaoTrong);
+    container.replaceChildren();
     return;
   }
 
-  const bang = document.createElement('table');
-  bang.className = 'bang-danh-sach-phieu';
+  const tieuDe = document.createElement('h2');
+  tieuDe.textContent = 'Phiếu đã đặt';
 
-  const thead = document.createElement('thead');
-  const hangTieuDe = document.createElement('tr');
-  const cacCot = [
-    'Mã phiếu',
-    'Phòng',
-    'Người đặt',
-    'Bắt đầu',
-    'Kết thúc',
-    'Trạng thái'
-  ];
+  const fragment = document.createDocumentFragment();
+  fragment.appendChild(tieuDe);
 
-  for (const tieuDe of cacCot) {
-    const th = document.createElement('th');
-    th.textContent = tieuDe;
-    hangTieuDe.appendChild(th);
+  // Hiển thị phiếu mới nhất ở trên cùng
+  const danhSachHienThi = mangPhieu.slice().reverse();
+
+  for (const phieu of danhSachHienThi) {
+    const item = document.createElement('div');
+    item.className = 'phieu-item';
+
+    // Dòng 1: Mã phiếu và trạng thái
+    const dongDau = document.createElement('div');
+
+    const spanMa = document.createElement('span');
+    spanMa.className = 'ma';
+    spanMa.textContent = phieu.maPhieu ?? phieu.id ?? '';
+
+    const spanTrangThai = document.createElement('span');
+    spanTrangThai.className = 'trang-thai';
+    spanTrangThai.textContent = phieu.trangThai ?? phieu.trangThaiPhieu ?? 'ChoDuyet';
+
+    dongDau.appendChild(spanMa);
+    dongDau.appendChild(document.createTextNode(' '));
+    dongDau.appendChild(spanTrangThai);
+    item.appendChild(dongDau);
+
+    // Dòng 2: Họ tên (MSSV) · Phòng
+    const dongGiua = document.createElement('div');
+    const bTen = document.createElement('b');
+    bTen.textContent = phieu.tenSV ?? phieu.nguoiDat ?? 'Sinh viên';
+    dongGiua.appendChild(bTen);
+
+    const mssvStr = phieu.mssv ? ` (${phieu.mssv})` : '';
+    const phongStr = ` · Phòng ${phieu.maPhong ?? phieu.tenPhong ?? phieu.phong ?? ''}`;
+    dongGiua.appendChild(document.createTextNode(mssvStr + phongStr));
+    item.appendChild(dongGiua);
+
+    // Dòng 3: Ngày và Khung giờ
+    const dongCuoi = document.createElement('div');
+    const ngay = phieu.ngay ?? '';
+    const gioBatDau = phieu.gioBatDau ?? phieu.thoiGianBatDau ?? '';
+    const gioKetThuc = phieu.gioKetThuc ?? phieu.thoiGianKetThuc ?? '';
+    const gioStr = (gioBatDau && gioKetThuc) ? `${gioBatDau} – ${gioKetThuc}` : (gioBatDau || gioKetThuc);
+    const thoiGianStr = [ngay ? `Ngày ${ngay}` : '', gioStr].filter(Boolean).join('  |  ');
+
+    dongCuoi.textContent = thoiGianStr;
+    item.appendChild(dongCuoi);
+
+    fragment.appendChild(item);
   }
-  thead.appendChild(hangTieuDe);
-  bang.appendChild(thead);
 
-  const tbody = document.createElement('tbody');
-
-  for (const phieu of mangPhieu) {
-    const hangDuLieu = document.createElement('tr');
-
-    const duLieuCot = [
-      phieu.maPhieu ?? phieu.id ?? '',
-      phieu.tenPhong ?? phieu.maPhong ?? phieu.phong ?? '',
-      phieu.nguoiDat ?? phieu.sinhVien ?? phieu.maSV ?? '',
-      phieu.thoiGianBatDau ?? phieu.batDau ?? '',
-      phieu.thoiGianKetThuc ?? phieu.ketThuc ?? '',
-      phieu.trangThaiPhieu ?? phieu.trangThai ?? ''
-    ];
-
-    for (const giaTri of duLieuCot) {
-      const td = document.createElement('td');
-      td.textContent = String(giaTri);
-      hangDuLieu.appendChild(td);
-    }
-
-    tbody.appendChild(hangDuLieu);
-  }
-
-  bang.appendChild(tbody);
-  container.replaceChildren(bang);
+  container.replaceChildren(fragment);
 }

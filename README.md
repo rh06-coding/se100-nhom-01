@@ -20,6 +20,42 @@ Ràng buộc cốt lõi: Không tồn tại hai lượt đặt trùng khung gi�
 - Bản chạy: https://se100-nhom-01.pages.dev
 - Pipeline: xem tab Actions
 
+## Phân công luồng nghiệp vụ
+
+Hệ thống được chia thành 4 luồng nghiệp vụ chính theo chiều dọc, mỗi thành viên phụ trách một nhánh tương ứng:
+
+| Luồng | Người phụ trách | Nhánh | Trách nhiệm chính |
+|---|---|---|---|
+| **Luồng 1: Đặt phòng** | Phạm Văn Đức Duy | `ph1-man-hinh` | Form nhập liệu (`src/form.js`), validation UI, thu thập thông tin đặt |
+| **Luồng 2: Duyệt phòng** | Nguyễn Văn Diễn | `ph2-luat` | Luật nghiệp vụ thời gian (`src/rules.js`), bảo vệ ràng buộc không trùng giờ (BR-01) |
+| **Luồng 3: Nhận & Trả phòng** | Võ Thành Đạt | `ph3-luu-doc` | Quản lý lưu trữ & đọc dữ liệu (`src/storage.js`), bảo vệ BR-02, BR-03 |
+| **Luồng 4: Quản trị & Tích hợp** | Lê Hoàng | `ph4-ket-qua` | Màn hình kết quả & danh sách (`src/view.js`), điều phối tích hợp (`src/main.js`), CI/CD |
+
+## Công nghệ sử dụng
+
+- **Giao diện & Logic:** HTML5, Vanilla CSS (Dark Mode), Vanilla JavaScript thuần (ES Modules: `import`/`export`), không dùng thư viện ngoài.
+- **Lưu trữ dữ liệu:**
+  - Vòng 1 (TH2): `localStorage` để chạy độc lập và demo luồng lõi nhanh chóng.
+  - Vòng 2 (M4): Nâng cấp sang `Supabase` lưu trữ tập trung.
+- **Triển khai & Tự động hoá:** Cloudflare Pages, GitHub Actions (`kiem-moc.yml`).
+
+## Hướng dẫn chạy thử nghiệm cục bộ
+
+Do mã nguồn ứng dụng sử dụng cơ chế JavaScript ES Modules (`type="module"`), trình duyệt yêu cầu chạy qua một máy chủ tĩnh (static web server) để tránh lỗi bảo mật CORS:
+
+1. **Dùng Python:**
+   ```bash
+   python -m http.server 8000 -d src
+   ```
+   Mở trình duyệt tại: `http://localhost:8000`
+
+2. **Dùng Node.js:**
+   ```bash
+   npx serve src
+   ```
+
+3. **Dùng VS Code Extension:** Nhấp chuột phải vào `src/index.html` và chọn **Open with Live Server**.
+
 ## Cấu trúc repo
 
 ```

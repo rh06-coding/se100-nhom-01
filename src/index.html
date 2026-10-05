@@ -133,7 +133,31 @@
     .thong-bao.loi        { background: rgba(248,113,113,.15); color: var(--clr-err); }
     .thong-bao.thanh-cong { background: rgba(34,197,94,.12);  color: var(--clr-ok);  }
 
-    /* ── Lịch sử phiếu (phần 4 sẽ thay bằng view.js, tạm để đây) ── */
+    /* ── Banner thông báo toàn cục ── */
+    #banner {
+      width: 100%;
+      max-width: 540px;
+      margin-bottom: 1.2rem;
+    }
+    #banner:empty { display: none; }
+    .banner {
+      padding: .75rem 1rem;
+      border-radius: var(--radius);
+      font-size: .92rem;
+      font-weight: 500;
+    }
+    .banner.banner-thanh-cong {
+      background: rgba(34,197,94,.12);
+      border: 1px solid var(--clr-ok);
+      color: var(--clr-ok);
+    }
+    .banner.banner-loi {
+      background: rgba(248,113,113,.15);
+      border: 1px solid var(--clr-err);
+      color: var(--clr-err);
+    }
+
+    /* ── Lịch sử phiếu (Người 4 render qua view.js) ── */
     #lich-su { width: 100%; max-width: 540px; margin-top: 2rem; }
     #lich-su h2 { font-size: 1rem; color: var(--clr-muted); margin-bottom: .8rem; }
     .phieu-item {
@@ -178,54 +202,22 @@
   <p>SE100 — Nhóm 01 · Hệ thống đặt chỗ phòng tự học</p>
 </header>
 
+<div id="banner"></div>
+
 <main id="form-container">
   <!-- form.js sẽ render vào đây -->
 </main>
 
 <section id="lich-su">
-  <!-- Lịch sử phiếu tạm thời (Người 4 sẽ thay bằng view.js) -->
+  <!-- view.js sẽ render danh sách phiếu vào đây -->
 </section>
 
 <footer>
   <p>Chạy từ commit: <code id="c">—</code></p>
 </footer>
 
-<script type="module">
-  import { khoiTaoForm, hienThiThongBaoForm } from './form.js';
-  import { luuPhieu, layTatCaPhieu }           from './storage.js';
-
-  const container = document.getElementById('form-container');
-  const lichSu    = document.getElementById('lich-su');
-
-  // Khởi tạo form — onSubmit là điểm nối với Người 2 (luat.js) và Người 3 (storage.js)
-  // Người 4 (ghep) sẽ thay hàm nội bộ này bằng chuỗi: kiemTra() → luu() → hienKetQua()
-  khoiTaoForm(container, (duLieu) => {
-    // === TẠM THỜI (ph1): bỏ qua kiểm tra luật, lưu thẳng → hiện xác nhận ===
-    // Người 2 sẽ chèn kiemTraLuat(duLieu) vào đây; nếu lỗi gọi hienThiThongBaoForm(...)
-    try {
-      const phieu = luuPhieu(duLieu);
-      hienThiThongBaoForm(container,
-        `✓ Đặt phòng thành công! Mã phiếu: ${phieu.maPhieu}`, 'thanh-cong');
-      _hienLichSu();
-    } catch (err) {
-      hienThiThongBaoForm(container, 'Lỗi lưu phiếu: ' + err.message, 'loi');
-    }
-  });
-
-  // Hiện lịch sử phiếu tạm thời (Người 4 thay bằng view.js sau)
-  function _hienLichSu() {
-    const ds = layTatCaPhieu();
-    if (!ds.length) { lichSu.innerHTML = ''; return; }
-    lichSu.innerHTML = '<h2>Phiếu đã đặt</h2>' + ds.slice().reverse().map(p => `
-      <div class="phieu-item">
-        <span class="ma">${p.maPhieu}</span>
-        <span class="trang-thai">${p.trangThai}</span><br>
-        <b>${p.tenSV}</b> (${p.mssv}) · Phòng ${p.maPhong}<br>
-        Ngày ${p.ngay} &nbsp;|&nbsp; ${p.gioBatDau} – ${p.gioKetThuc}
-      </div>`).join('');
-  }
-  _hienLichSu(); // Hiện ngay khi tải lại trang (dữ liệu còn trong localStorage)
-
+<script type="module" src="./main.js"></script>
+<script>
   // Hiện commit hash nếu có
   document.getElementById('c').textContent =
     document.documentElement.dataset.commit || '(dev)';

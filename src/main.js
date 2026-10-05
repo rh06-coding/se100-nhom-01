@@ -1,30 +1,35 @@
+// src/main.js
+// Mục đích: Điều phối 4 module độc lập (form, rules, storage, view) theo Mediator Pattern.
+// Từng module không biết nhau trực tiếp; toàn bộ luồng tích hợp đi qua file này.
+//
+// [Câu 1 trước commit]: Nhận dữ liệu từ form.js -> gọi rules.js kiểm tra hợp lệ
+//   và trùng giờ -> gọi storage.js lưu phiếu -> gọi view.js hiển thị kết quả.
+// [Câu 2 trước commit]: Xoá file này -> 4 module rời rạc không kết nối được ->
+//   luồng chính đứt hoàn toàn, không thể demo được.
+// [Câu 3 trước commit]: Không chỗ nào khác trong src/ làm nhiệm vụ điều phối luồng. ✓
+
 import { khoiTaoForm, hienThiThongBaoForm } from './form.js';
+import { kiemTraHopLeThoiGian, kiemTraTrungGio } from './rules.js';
 import { layTatCaPhieu, luuPhieu } from './storage.js';
 import { hienBannerThanhCong, hienBannerLoi, hienDanhSachPhieu } from './view.js';
 
-// Kiểm tra trùng giờ sơ bộ thực thi BR-01 (không hai phiếu trùng khung giờ cho cùng một phòng)
-function kiemTraTrung(phieuMoi, danhSachPhieu) {
-  const cungPhongNgay = (danhSachPhieu || []).filter(
-    p => p.maPhong === phieuMoi.maPhong && p.ngay === phieuMoi.ngay
-  );
-
-  for (const p of cungPhongNgay) {
-    const batDauDaCo = p.gioBatDau ?? p.thoiGianBatDau ?? '';
-    const ketThucDaCo = p.gioKetThuc ?? p.thoiGianKetThuc ?? '';
-    if (phieuMoi.gioBatDau < ketThucDaCo && batDauDaCo < phieuMoi.gioKetThuc) {
-      return { trung: true, trungVoi: p };
-    }
-  }
-  return { trung: false, trungVoi: null };
-}
-
 function xuLyDatPhong(duLieuForm, formContainer) {
-  const danhSachHienTai = layTatCaPhieu() || [];
+  // 1. Kiểm tra nghiệp vụ thời gian (giờ kết thúc phải sau giờ bắt đầu)
+  const hopLeGio = kiemTraHopLeThoiGian(duLieuForm.gioBatDau, duLieuForm.gioKetThuc);
+  if (!hopLeGio.hopLe) {
+    hienBannerLoi(hopLeGio.lyDo);
+    if (formContainer) {
+      hienThiThongBaoForm(formContainer, hopLeGio.lyDo, 'loi');
+    }
+    return;
+  }
 
-  // Kiểm tra trùng giờ theo ràng buộc cốt lõi BR-01
-  const ketQuaTrung = kiemTraTrung(duLieuForm, danhSachHienTai);
+  // 2. Kiểm tra ràng buộc trùng giờ BR-01 với các phiếu đã lưu
+  const danhSachHienTai = layTatCaPhieu() || [];
+  const ketQuaTrung = kiemTraTrungGio(duLieuForm, danhSachHienTai);
   if (ketQuaTrung.trung) {
-    const lyDo = `Phòng ${duLieuForm.maPhong} đã có người đặt trong khung giờ này (trùng phiếu ${ketQuaTrung.trungVoi.maPhieu}).`;
+    const maPhieuTrung = ketQuaTrung.trungVoi?.maPhieu || 'đã có';
+    const lyDo = `Phòng ${duLieuForm.maPhong} đã có người đặt trong khung giờ này (trùng phiếu ${maPhieuTrung}).`;
     hienBannerLoi(lyDo);
     if (formContainer) {
       hienThiThongBaoForm(formContainer, lyDo, 'loi');
@@ -32,6 +37,7 @@ function xuLyDatPhong(duLieuForm, formContainer) {
     return;
   }
 
+  // 3. Lưu trữ phiếu và hiển thị kết quả
   try {
     const phieuDaLuu = luuPhieu(duLieuForm);
     hienBannerThanhCong(phieuDaLuu);
@@ -42,6 +48,7 @@ function xuLyDatPhong(duLieuForm, formContainer) {
         'thanh-cong'
       );
     }
+    // Cập nhật danh sách hiển thị
     hienDanhSachPhieu(layTatCaPhieu());
   } catch (err) {
     const thongBaoLoi = 'Lỗi lưu phiếu: ' + err.message;
@@ -58,10 +65,11 @@ function khoiTao() {
     khoiTaoForm(formContainer, (duLieu) => xuLyDatPhong(duLieu, formContainer));
   }
 
-  // Tải lại danh sách phiếu đã lưu khi khởi tạo trang
+  // Tải lại danh sách phiếu đã lưu khi khởi tạo trang (F5 còn dữ liệu)
   hienDanhSachPhieu(layTatCaPhieu());
 }
 
 // Chạy khởi tạo ứng dụng
 khoiTao();
+
 

@@ -1,5 +1,235 @@
 <!doctype html>
-<meta charset="utf-8">
-<title>SE100 — Nhóm 01</title>
-<h1>Nhóm 01 — Hệ thống Đặt chỗ Phòng tự học</h1>
-<p>Chạy từ commit: <code id="c">…</code></p>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đặt phòng tự học — SE100 Nhóm 01</title>
+  <meta name="description" content="Hệ thống đặt chỗ phòng tự học dành cho sinh viên">
+  <style>
+    /* ── Reset & biến màu ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --clr-bg:       #0f172a;
+      --clr-surface:  #1e293b;
+      --clr-border:   #334155;
+      --clr-primary:  #6366f1;
+      --clr-primary-h:#818cf8;
+      --clr-text:     #f1f5f9;
+      --clr-muted:    #94a3b8;
+      --clr-ok:       #22c55e;
+      --clr-err:      #f87171;
+      --radius:       10px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--clr-bg);
+      color: var(--clr-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    header h1 {
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-h));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p { color: var(--clr-muted); margin-top: .4rem; font-size: .95rem; }
+
+    /* ── Card wrapper ── */
+    .form-wrapper {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius);
+      padding: 2rem 2.5rem;
+      width: 100%;
+      max-width: 540px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    }
+    .form-wrapper h2 {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      color: var(--clr-primary-h);
+    }
+
+    /* ── Form controls ── */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+      margin-bottom: 1.1rem;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    label {
+      font-size: .85rem;
+      color: var(--clr-muted);
+      font-weight: 500;
+    }
+    label span { color: var(--clr-err); }
+
+    input, select {
+      background: var(--clr-bg);
+      border: 1px solid var(--clr-border);
+      border-radius: 6px;
+      color: var(--clr-text);
+      padding: .55rem .75rem;
+      font-size: .95rem;
+      width: 100%;
+      transition: border-color .2s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--clr-primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,.25);
+    }
+    select option { background: var(--clr-surface); }
+
+    /* Ngày không âm từ hôm nay */
+    input[type="date"] { color-scheme: dark; }
+
+    /* ── Nút đặt ── */
+    #btn-dat-phong {
+      margin-top: .8rem;
+      width: 100%;
+      padding: .7rem;
+      border: none;
+      border-radius: 7px;
+      background: var(--clr-primary);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+    #btn-dat-phong:hover  { background: var(--clr-primary-h); }
+    #btn-dat-phong:active { transform: scale(.98); }
+
+    /* ── Thông báo ── */
+    .thong-bao {
+      min-height: 1.2rem;
+      font-size: .88rem;
+      margin-top: .6rem;
+      border-radius: 6px;
+      padding: .4rem .6rem;
+    }
+    .thong-bao:empty { padding: 0; }
+    .thong-bao.loi        { background: rgba(248,113,113,.15); color: var(--clr-err); }
+    .thong-bao.thanh-cong { background: rgba(34,197,94,.12);  color: var(--clr-ok);  }
+
+    /* ── Lịch sử phiếu (phần 4 sẽ thay bằng view.js, tạm để đây) ── */
+    #lich-su { width: 100%; max-width: 540px; margin-top: 2rem; }
+    #lich-su h2 { font-size: 1rem; color: var(--clr-muted); margin-bottom: .8rem; }
+    .phieu-item {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius);
+      padding: .9rem 1.1rem;
+      margin-bottom: .7rem;
+      font-size: .88rem;
+      line-height: 1.7;
+    }
+    .phieu-item .ma { font-weight: 700; color: var(--clr-primary-h); }
+    .phieu-item .trang-thai {
+      display: inline-block;
+      padding: .15rem .5rem;
+      border-radius: 20px;
+      font-size: .78rem;
+      background: rgba(99,102,241,.2);
+      color: var(--clr-primary-h);
+    }
+    #lich-su:empty { display: none; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 3rem;
+      font-size: .78rem;
+      color: var(--clr-muted);
+      text-align: center;
+    }
+    code { font-size: .8rem; opacity: .6; }
+
+    @media (max-width: 480px) {
+      .form-wrapper { padding: 1.4rem 1.2rem; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Đặt phòng tự học</h1>
+  <p>SE100 — Nhóm 01 · Hệ thống đặt chỗ phòng tự học</p>
+</header>
+
+<main id="form-container">
+  <!-- form.js sẽ render vào đây -->
+</main>
+
+<section id="lich-su">
+  <!-- Lịch sử phiếu tạm thời (Người 4 sẽ thay bằng view.js) -->
+</section>
+
+<footer>
+  <p>Chạy từ commit: <code id="c">—</code></p>
+</footer>
+
+<script type="module">
+  import { khoiTaoForm, hienThiThongBaoForm } from './form.js';
+  import { luuPhieu, layTatCaPhieu }           from './storage.js';
+
+  const container = document.getElementById('form-container');
+  const lichSu    = document.getElementById('lich-su');
+
+  // Khởi tạo form — onSubmit là điểm nối với Người 2 (luat.js) và Người 3 (storage.js)
+  // Người 4 (ghep) sẽ thay hàm nội bộ này bằng chuỗi: kiemTra() → luu() → hienKetQua()
+  khoiTaoForm(container, (duLieu) => {
+    // === TẠM THỜI (ph1): bỏ qua kiểm tra luật, lưu thẳng → hiện xác nhận ===
+    // Người 2 sẽ chèn kiemTraLuat(duLieu) vào đây; nếu lỗi gọi hienThiThongBaoForm(...)
+    try {
+      const phieu = luuPhieu(duLieu);
+      hienThiThongBaoForm(container,
+        `✓ Đặt phòng thành công! Mã phiếu: ${phieu.maPhieu}`, 'thanh-cong');
+      _hienLichSu();
+    } catch (err) {
+      hienThiThongBaoForm(container, 'Lỗi lưu phiếu: ' + err.message, 'loi');
+    }
+  });
+
+  // Hiện lịch sử phiếu tạm thời (Người 4 thay bằng view.js sau)
+  function _hienLichSu() {
+    const ds = layTatCaPhieu();
+    if (!ds.length) { lichSu.innerHTML = ''; return; }
+    lichSu.innerHTML = '<h2>Phiếu đã đặt</h2>' + ds.slice().reverse().map(p => `
+      <div class="phieu-item">
+        <span class="ma">${p.maPhieu}</span>
+        <span class="trang-thai">${p.trangThai}</span><br>
+        <b>${p.tenSV}</b> (${p.mssv}) · Phòng ${p.maPhong}<br>
+        Ngày ${p.ngay} &nbsp;|&nbsp; ${p.gioBatDau} – ${p.gioKetThuc}
+      </div>`).join('');
+  }
+  _hienLichSu(); // Hiện ngay khi tải lại trang (dữ liệu còn trong localStorage)
+
+  // Hiện commit hash nếu có
+  document.getElementById('c').textContent =
+    document.documentElement.dataset.commit || '(dev)';
+</script>
+
+</body>
+</html>
